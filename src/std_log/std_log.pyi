@@ -1,4 +1,4 @@
-from typing import Optional, Any, Dict
+from typing import Optional, Any
 import logging
 
 
@@ -8,6 +8,7 @@ class StandardLogger:
         @param name: Optional[str] - Name of the logger, default is the class name
         @param dir: Optional[str] - Directory to save log files, default is 'None' (no file logging)
     """
+    __VERSION__ = "1.0.0"
     def __init__(self, name: Optional[str] = None, dir: Optional[str] = None) -> None: ...
     def console_handler(self) -> None: ...
     def file_handler(self) -> None: ...

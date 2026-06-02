@@ -98,8 +98,9 @@ Example output:
 ```
 
 ## Requirements
-- Python 3.7+
-- No external dependencies (uses standard library only)
+- Python 3.10+
+- `structlog` (required for `StructLogger`)
+- `serilog-python` (required for `SeriLogger`)
 
 ## Project Structure
 ```

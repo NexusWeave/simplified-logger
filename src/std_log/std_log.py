@@ -10,6 +10,9 @@ import structlog
 from serilog_python import setup_logging
 
 class StandardLogger(object):
+
+    __VERSION__ = "1.0.0"
+
     def __init__(self, name: Optional[str] = None, dir:Optional[str] = None) -> None:
 
         self.name : str = name if name else self.__class__.__name__ 
@@ -98,6 +101,9 @@ class StandardLogger(object):
         self.log.critical(message)
 
 class StructLogger:
+
+    __VERSION__ = "1.0.0"
+
     def __init__(self, name: Optional[str] = None, dir: Optional[str] = None) -> None:
         self.name: str = name if name else self.__class__.__name__
         self.dir: Optional[str] = '.' + dir if dir else None
@@ -163,6 +169,9 @@ class StructLogger:
         self.log.critical(message, **kwargs)
 
 class SeriLogger:
+
+    __VERSION__ = "1.3"
+
     def __init__(self, name: Optional[str] = None, dir: Optional[str] = None) -> None:
         self.name: str = name if name else self.__class__.__name__
         self.dir: Optional[str] = '.' + dir if dir else None

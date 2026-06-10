@@ -1,35 +1,35 @@
-name: Publish Python Package
+name: Deploy Software to PyPI
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Release"]
+    types:
+      - completed
 
 jobs:
-  deploy:
+  deploy-pypi:
+    name: Deploy to PyPI
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
-      name: release 
+      name: release
       url: https://pypi.org/p/simplified_logging
     permissions:
       id-token: write
       contents: read
-
     steps:
     - uses: actions/checkout@v4
-
+      with:
+        ref: ${{ github.event.workflow_run.head_sha }}
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.x'
-
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install build
-
     - name: Build package
       run: python -m build
-
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1

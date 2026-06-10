@@ -1,32 +1,30 @@
-name: Publish Release
+name: Release Software
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows: ["Test"]
+    types:
+      - completed
 
 jobs:
-  build-n-release:
-    name: Build and Create GitHub Release
+  release-github:
+    name: Create GitHub Release
+    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'v') }}
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Dette gir GitHub lov til å lage en release
-
+      contents: write
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.workflow_run.head_sha }}
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: "3.x"
-
     - name: Install build tools
       run: python -m pip install build --user
-
-    - name: Build a binary wheel and a source tarball
+    - name: Build package
       run: python -m build
-
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
       with:

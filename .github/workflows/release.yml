@@ -2,14 +2,14 @@ name: Release Software
 
 on:
   workflow_run:
-    workflows: ["Test"]
+    workflows: ["Test Software"]
     types:
       - completed
 
 jobs:
   release-github:
     name: Create GitHub Release
-    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.event.workflow_run.head_branch, 'v') }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && (startsWith(github.event.workflow_run.head_branch, 'v') || startsWith(github.event.workflow_run.head_sha, 'refs/tags/v')) }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

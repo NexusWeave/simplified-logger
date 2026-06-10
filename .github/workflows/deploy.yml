@@ -2,7 +2,7 @@ name: Deploy Software to PyPI
 
 on:
   workflow_run:
-    workflows: ["Release"]
+    workflows: ["Release Software"]
     types:
       - completed
 

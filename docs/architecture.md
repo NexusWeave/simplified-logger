@@ -1,57 +1,53 @@
 # Project Architecture
 
 ## Overview
-`simplified-logger` is a lightweight Python library that acts as a wrapper around the standard `logging` module. Its primary goal is to simplify the initialization and use of logging in Python applications by providing a pre-configured, object-oriented interface.
+`simplified-logger` is a simple Python library. It wraps the standard `logging` module to make it easier to set up. It provides a clear way to start logging in your applications.
 
 ## Architecture Diagram
-Below is a visualization of how the components interact:
+You can see how the components work together here:
 
 ![Architecture Diagram](./architecture.drawio)
 
-*Note: The `.drawio` file can be opened and edited using [diagrams.net](https://app.diagrams.net/).*
+*Note: Use [diagrams.net](https://app.diagrams.net/) to edit the `.drawio` file.*
 
-## Core Components
+## Main Components
 
-The library provides three distinct logger classes within `src/std_log/std_log.py`, each catering to different logging needs:
+The library has three logger classes in `src/std_log/std_log.py`:
 
-### 1. `StandardLogger` (Alias: `Logger`)
-The classic wrapper around Python's standard `logging` module. It is zero-dependency and ideal for simple scripts and applications that need standard console and file output.
+### 1. `StandardLogger`
+This wraps the standard Python `logging` module. It has no extra dependencies. It is best for simple scripts.
 
 ### 2. `StructLogger`
-A wrapper around the `structlog` library. It is designed for structured logging, emitting logs in JSON format by default. This is ideal for modern cloud environments and log aggregation tools (e.g., ELK stack, Datadog).
+This wraps the `structlog` library. it is used for structured logging and outputs JSON. This is good for modern cloud tools like Datadog or ELK.
 
 ### 3. `SeriLogger`
-A wrapper around `serilog-python`, inspired by the popular .NET Serilog library. It supports structured logging with a focus on application-wide setup and compatibility with Serilog-based sinks.
+This wraps `serilog-python`. It is inspired by the .NET Serilog library. It focuses on modern structured logging.
 
-## Key Mechanisms
+## How it works
 
-### 1. Handler Management & Duplicate Prevention
-Each logger class manages its own handlers. The `StandardLogger` uses boolean flags (`is_file`, `is_console`) to track initialization and prevent redundant handler attachment.
+### 1. Handler Management
+Each logger manages its own handlers. The `StandardLogger` uses flags to make sure it doesn't add the same handler twice.
 
-### 2. Back-end Specific Implementations
-- **Standard:** Dynamically sets log levels on each call for maximum flexibility.
-- **Structured:** Leverages `structlog` pipelines for high-performance JSON rendering.
-- **Serilog:** Uses `setup_logging` from `serilog-python` to configure a standardized structured output.
+### 2. Automatic Folders
+When you start a file logger, the library automatically creates the log folder for you. It uses `os.makedirs(exist_ok=True)`.
 
-### 3. Automatic Directory Creation
-When a file handler is initialized, the library automatically creates the target log directory (prefixed with a dot, e.g., `.logs/`) using `os.makedirs(exist_ok=True)`.
+## CI/CD Pipeline
+We use GitHub Actions to automate our workflow. The pipeline has three separate steps:
 
-## Project Layout
+1. **`test.yml`**: This is the first step. it runs tests using Pytest on Python 3.10, 3.11, and 3.12. It starts when you push code or a tag.
+2. **`release.yml`**: This starts after the tests pass. If you pushed a version tag (like `v1.0`), it builds the package and creates a GitHub Release.
+3. **`deploy.yml`**: This starts after the release is created. It uploads the package to PyPI.
 
-```text
-simplified-logger/
-├── docs/
-│   ├── architecture.md       # This document
-│   └── architecture.drawio   # Diagram source
-├── src/
-│   └── std_log/
-│       ├── __init__.py
-│       ├── std_log.py        # Core implementation
-│       └── std_log.pyi       # Type stubs
-├── pyproject.toml            # Build configuration
-└── README.md                 # Usage instructions
-```
+This system ensures that:
+- Tests must pass before a Release.
+- A Release must exist before we Deploy to PyPI.
 
-## Dependencies
-- **Python 3.10+** (standard library only).
-- No external runtime dependencies.
+## Testing Strategy
+Tests are in the `tests/` folder. We use `pytest`. We test:
+- How loggers are created.
+- How handlers are managed.
+- How folders are created.
+- Basic logging for all three logger types.
+
+Read the [Testing Guide](./testing.md) for more details.
+

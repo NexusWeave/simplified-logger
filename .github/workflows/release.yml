@@ -9,7 +9,7 @@ on:
 jobs:
   release-github:
     name: Create GitHub Release
-    if: ${{ github.event.workflow_run.conclusion == 'success' && (startsWith(github.event.workflow_run.head_branch, 'v') || startsWith(github.event.workflow_run.head_sha, 'v')) }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch != 'main' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write

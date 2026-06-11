@@ -9,11 +9,15 @@ on:
 jobs:
   release-github:
     name: Create GitHub Release
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch != 'main' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+    - name: Debug Info
+      run: |
+        echo "Triggered by event: ${{ github.event.workflow_run.event }}"
+        echo "Head branch: ${{ github.event.workflow_run.head_branch }}"
     - uses: actions/checkout@v4
       with:
         ref: ${{ github.event.workflow_run.head_sha }}
